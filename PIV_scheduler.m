@@ -113,7 +113,7 @@ disp([num2str(length(Vectors)),' resolved vectors were found ....',num2str(lengt
 [Images_a,Images_b]=removedone(Images_a,Images_b,Vectors);
 
 %% Create sequential cases and return group sizes for .cas files  
-[groups]=sequence(Images_a);
+[groups]=sequence_opt(Images_a,260);
 
 if my_firsttime==1
     for index=1:length(groups)
@@ -157,8 +157,8 @@ for index=1:length(Images_a)
 end
 
 fclose('all');
-if length(groups)>4
-    groupstorun=4; %maximum number of groups to run
+if length(groups)>6
+    groupstorun=6; %maximum number of groups to run
 else
     groupstorun=length(groups);
 end
@@ -168,11 +168,18 @@ if (groupstorun)==0
     return
 end
 
+% Set the required hex indexing for each of the 7 processors for parallel
+% computing
+%%Note: You need to optimise the use of preocessors by dividing the number
+%%of groups/per avialbe processor. For now, I hard coded the following indecies 
+% for 1600 images where each group utlizes 3 processors
+Processorslist={'0x01'; '0x02';'0x04'; '0x08';'0x10'; '0x20'};
+
 for index=1: groupstorun
    
     if index_killed(index)==true
-       
-        eval(['!start "group',Project_name,Run_name,FOV_name,num2str(index),'" .\widim33_2.exe ',Main_folder,'\',cell2mat(filename(index))]);
+        
+        eval(['!start /affinity ',Processorslist{index},' "group',Project_name,Run_name,FOV_name,num2str(index),'" .\widim33_2.exe ',Main_folder,'\',cell2mat(filename(index))]);
         pause(20);
 
         index_killed(index)=false;
