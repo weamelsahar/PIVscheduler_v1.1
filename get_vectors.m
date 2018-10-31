@@ -1,5 +1,5 @@
-function [Vectors]=get_vectors(Main_folder)
+function [Vectors]=get_vectors(vectors_folder)
 
-[Vectors]=dir([Main_folder(1:end-length('\Renamed')),'\Vectors\*.plt']);
+[Vectors]=dir([vectors_folder,'\*.plt']);
 
 end
